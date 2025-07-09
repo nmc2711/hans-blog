@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+
 import {
   Card,
   CardContent,
@@ -9,11 +10,81 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { MessageCircle, Heart } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import MarkdownRenderer from './markdown-renderer';
 
-export default function PostCard({ post }) {
-  const likeLoading = false;
-  const liked = true;
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  author: {
+    name: string | null;
+    image: string | null;
+  };
+  _count: {
+    comments: number;
+    likes: number;
+  };
+}
+
+export default function PostCard({
+  post,
+  showFullContent = false,
+}: {
+  post: Post;
+  showFullContent?: boolean;
+}) {
+  const { data: session } = useSession();
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(post._count.likes);
+  const [likeLoading, setLikeLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!session?.user?.id) {
+        setLikeLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/posts/${post.id}/like-status`);
+        if (response.ok) {
+          const data = await response.json();
+          setLiked(data.liked);
+        }
+      } catch (error) {
+        console.error('좋아요 상태조회 실패 ㅜ', error);
+      } finally {
+        setLikeLoading(false);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [post.id, session?.user?.id]);
+
+  const handleLike = async () => {
+    if (!session) return;
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/like`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+
+      setLiked(data.liked);
+      setLikeCount((prev) => (data.liked ? prev + 1 : prev - 1));
+    } catch (error) {
+      console.error('좋아요 상태 전환 실패 ㅠㅠ', error);
+    }
+  };
+
+  const content = showFullContent
+    ? post.content
+    : post.content.slice(0, 200) + (post.content.length > 200 ? '...' : '');
+
   return (
     <Card>
       <CardHeader>
@@ -30,7 +101,7 @@ export default function PostCard({ post }) {
           </div>
         </div>
         <CardTitle className='text-xl'>
-          {false ? (
+          {showFullContent ? (
             post.title
           ) : (
             <Link href={`/posts/${post.id}`} className='hover:underline'>
@@ -40,13 +111,15 @@ export default function PostCard({ post }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p>컨텐츠</p>
+        <MarkdownRenderer content={content} />
       </CardContent>
       <CardFooter className='flex items-center space-x-4'>
         <Button
           variant='ghost'
           size='sm'
-          className='flex itemst-center sapce-x-1'
+          className='flex items-center space-x-1'
+          onClick={handleLike}
+          disabled={!session}
         >
           <Heart
             className={`h-4 w-4 ${
@@ -57,15 +130,15 @@ export default function PostCard({ post }) {
                 : ''
             }`}
           />
-          <span>10</span>
+          <span>{likeCount}</span>
         </Button>
         <Button
           variant='ghost'
           size='sm'
-          className='flex itemst-center sapce-x-1'
+          className='flex items-center space-x-1'
         >
-          <MessageCircle />
-          <span>5</span>
+          <MessageCircle className='h-4 w-4' />
+          <span>{post._count.comments}</span>
         </Button>
       </CardFooter>
     </Card>

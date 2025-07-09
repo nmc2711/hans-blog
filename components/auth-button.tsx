@@ -46,7 +46,7 @@ export default function AuthButton() {
             </p>
           </div>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>로그아웃</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

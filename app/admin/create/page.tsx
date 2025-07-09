@@ -60,7 +60,7 @@ export default function CreatePostPage() {
             <h1 className='text-3xl font-bold'>새로운 포스팅 작성</h1>
             <Button variant='outline' onClick={() => setPreview(!preview)}>
               <Eye className='h-4 w-4 mr-2' />
-              {preview ? 'Edit' : 'Preview'}
+              {preview ? '편집' : '미리보기'}
             </Button>
           </div>
 
@@ -116,14 +116,16 @@ export default function CreatePostPage() {
             {preview && (
               <Card>
                 <CardHeader>
-                  <CardTitle>프리뷰</CardTitle>
+                  <CardTitle>미리보기</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-4'>
-                    <h2 className='text-2xl font-bold'>{title || '글 제목'}</h2>
-                    {/* <MarkdownRenderer
-                      content={content || '마크다운 컨텐츠 작성...'}
-                    /> */}
+                    <h2 className='text-2xl font-bold'>{title || '제목'}</h2>
+                    <MarkdownRenderer
+                      content={
+                        content || '컨텐츠 미리보기 화면이 여기 나타납니다.'
+                      }
+                    />
                   </div>
                 </CardContent>
               </Card>
