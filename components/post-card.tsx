@@ -83,7 +83,7 @@ export default function PostCard({
 
   const content = showFullContent
     ? post.content
-    : post.content.slice(0, 200) + (post.content.length > 200 ? '...' : '');
+    : post.content.slice(0, 100) + (post.content.length > 100 ? '...' : '');
 
   return (
     <Card>
@@ -110,7 +110,11 @@ export default function PostCard({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent
+        style={{
+          height: '148px',
+        }}
+      >
         <MarkdownRenderer content={content} />
       </CardContent>
       <CardFooter className='flex items-center space-x-4'>
