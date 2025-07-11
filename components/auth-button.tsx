@@ -18,7 +18,7 @@ export default function AuthButton() {
   if (!session) {
     return (
       <Button variant='outline' onClick={() => signIn('google')}>
-        회원가입
+        로그인
       </Button>
     );
   }
