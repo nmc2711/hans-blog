@@ -135,13 +135,14 @@ export default function Home() {
               </Tooltip>
 
               <div className='flex items-center space-x-2 sm:space-x-4'>
-                <Button asChild size='sm' className='max-sm:h-9 max-sm:px-2'>
-                  <Link href='/admin/create'>
-                    <PlusCircle className='h-4 w-4 mr-0 sm:mr-2' />
-                    <span className='hidden sm:inline'>글쓰기</span>
-                  </Link>
-                </Button>
-
+                {isAdmin && (
+                  <Button asChild size='sm' className='max-sm:h-9 max-sm:px-2'>
+                    <Link href='/admin/create'>
+                      <PlusCircle className='h-4 w-4 mr-0 sm:mr-2' />
+                      <span className='hidden sm:inline'>글쓰기</span>
+                    </Link>
+                  </Button>
+                )}
                 <AuthButton />
               </div>
             </div>
