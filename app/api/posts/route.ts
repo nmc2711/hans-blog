@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
-import { getCurrentUser, requireAdmin } from '@/lib/utils/auth';
-import { NextResponse, NextRequest } from 'next/server';
+import { requireAdmin } from '@/lib/utils/auth';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -16,10 +16,11 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' },
     });
+
     return NextResponse.json(posts);
-  } catch (error) { 
+  } catch {
     return NextResponse.json(
-      { error: '포스트 불러오기 실패' },
+      { error: 'Failed to fetch posts' },
       { status: 500 }
     );
   }
@@ -27,6 +28,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const user = await requireAdmin();
+
   try {
     const { title, content, published } = await request.json();
 
@@ -45,9 +47,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(post);
-  } error { 
-    console.log(error)
   } catch {
-    return NextResponse.json({ error: '글쓰기 실패..' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create post' },
+      { status: 500 }
+    );
   }
 }
