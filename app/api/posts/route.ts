@@ -16,9 +16,8 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' },
     });
-
     return NextResponse.json(posts);
-  } catch {
+  } catch (error) { 
     return NextResponse.json(
       { error: '포스트 불러오기 실패' },
       { status: 500 }
@@ -46,6 +45,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(post);
+  } error { 
+    console.log(error)
   } catch {
     return NextResponse.json({ error: '글쓰기 실패..' }, { status: 500 });
   }
