@@ -130,7 +130,7 @@ export default function Home() {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>물범 누르면 메인가요</p>
+                  <p>메인으로</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -151,7 +151,7 @@ export default function Home() {
 
         <main className='container mx-auto px-4 sm:px-6 lg:px-6 py-6 sm:py-8'>
           <div className='mx-auto space-y-10'>
-            <div className='relative text-center space-y-4 pt-10 pb-5 overflow-hidden'>
+            <div className='relative text-center space-y-4 pt-10 pb-5 overflow-visible'>
               <div
                 className='bubble'
                 style={{
@@ -224,19 +224,20 @@ export default function Home() {
                   </span>
                 ))}
               </h1>
-              <p className='text-lg sm:text-xl text-cyan-200/90 font-semibold'>
+              <p className={`text-lg sm:text-xl text-cyan-200/90`}>
                 사람들의 이야기를 듣는 것을 좋아하고
                 <br />
                 뒤뚱뒤뚱 달리는 취미를 가지고 있어요
               </p>
 
-              <div className='absolute top-6 right-60 rounded-full p-0.5 border-3 border-dotted border-b-blue-300'>
+              <div className='absolute top-[-1%] right-[2%] sm:top-[-1%] sm:-right-[6%]  lg:right-[2%] md:top-[3%] md:-right-[4%] rounded-full p-0.5 border-4 border-dotted border-blue-300 z-10'>
                 <Image
-                  className='rounded-full w-44 h-44'
+                  className='rounded-full w-[19vw] h-[19vw] sm:w-[13vw] sm:h-[13vw] md:w-[8vw] md:h-[8vw] lg:w-[13vw] lg:h-[13vw] min-w-[80px] min-h-[80px] max-w-[176px] max-h-[176px] object-cover'
                   src='/03.gif'
                   alt='빼꼼 쳐다보는 하프물범'
-                  width={32}
-                  height={32}
+                  width={176}
+                  height={176}
+                  sizes='(max-width: 640px) 19vw, (max-width: 768px) 17vw, (max-width: 1024px) 12vw, (max-width: 1280px) 14vw, 176px'
                 />
               </div>
             </div>
