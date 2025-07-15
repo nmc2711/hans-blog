@@ -1,4 +1,5 @@
 'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Eye } from 'lucide-react';
@@ -8,6 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useRouter } from 'next/navigation';
 import MarkdownRenderer from '@/components/markdown-renderer';
 
@@ -16,6 +24,7 @@ export default function CreatePostPage() {
   const [preview, setPreview] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [category, setCategory] = useState('');
   const [published, setPublished] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +37,7 @@ export default function CreatePostPage() {
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, published }),
+        body: JSON.stringify({ title, content, category, published }),
       });
 
       if (response.ok) {
@@ -74,12 +83,27 @@ export default function CreatePostPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className='space-y-6'>
                   <div className='space-y-2'>
+                    <Label htmlFor='title'>카테고리</Label>
+                    <Select onValueChange={setCategory} value={category}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='카테고리를 선택하세요' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* 👇 여기가 수정된 부분입니다. */}
+                        <SelectItem value='JavaScript'>JavaScript</SelectItem>
+                        <SelectItem value='CS'>CS</SelectItem>
+                        <SelectItem value='algorithm'>알고리즘</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className='space-y-2'>
                     <Label htmlFor='title'>제목</Label>
                     <Input
                       id='title'
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder='타이틀을 입력하세요...'
+                      placeholder='제목을 입력하세요...'
                       required
                     />
                   </div>
@@ -91,7 +115,7 @@ export default function CreatePostPage() {
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       placeholder='본문을 입력하세요...'
-                      rows={20}
+                      rows={6}
                       required
                       className='min-h-80'
                     />
@@ -103,11 +127,11 @@ export default function CreatePostPage() {
                       checked={published}
                       onCheckedChange={setPublished}
                     />
-                    <Label htmlFor='published'>즉시발행</Label>
+                    <Label htmlFor='published'>즉시 발행</Label>
                   </div>
 
                   <Button type='submit' disabled={loading} className='w-full'>
-                    {loading ? '업로드 진행중..' : '업로드'}
+                    {loading ? '업로드 중...' : '업로드'}
                   </Button>
                 </form>
               </CardContent>
@@ -121,6 +145,11 @@ export default function CreatePostPage() {
                 <CardContent>
                   <div className='space-y-4'>
                     <h2 className='text-2xl font-bold'>{title || '제목'}</h2>
+                    {category && (
+                      <p className='text-muted-foreground'>
+                        카테고리: {category}
+                      </p>
+                    )}
                     <MarkdownRenderer
                       content={
                         content || '컨텐츠 미리보기 화면이 여기 나타납니다.'
