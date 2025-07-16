@@ -5,11 +5,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const post = await prisma.post.findUnique({
-      where: { id: params.id, published: true },
+      where: { id: resolvedParams.id, published: true },
       include: {
         author: {
           select: { id: true, name: true, image: true },
@@ -36,7 +37,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -44,9 +45,10 @@ export async function PUT(
   }
 
   try {
+    const resolvedParams = await params;
     const { title, content } = await request.json();
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: { authorId: true },
     });
 
@@ -55,7 +57,7 @@ export async function PUT(
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: { title, content },
     });
 
