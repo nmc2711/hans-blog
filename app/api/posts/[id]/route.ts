@@ -8,9 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
+    const { id } = await params;
     const post = await prisma.post.findUnique({
-      where: { id: resolvedParams.id, published: true },
+      where: { id, published: true },
       include: {
         author: {
           select: { id: true, name: true, image: true },
@@ -27,7 +27,7 @@ export async function GET(
 
     return NextResponse.json(post);
   } catch (error) {
-    console.error(error);
+    console.error('Failed to fetch post:', error);
     return NextResponse.json(
       { error: 'Failed to fetch post' },
       { status: 500 }
@@ -45,10 +45,19 @@ export async function PUT(
   }
 
   try {
-    const resolvedParams = await params;
-    const { title, content } = await request.json();
+    const { id } = await params;
+    const body = await request.json();
+    const { title, content } = body;
+
+    if (!title || !content) {
+      return NextResponse.json(
+        { error: 'Title and content are required' },
+        { status: 400 }
+      );
+    }
+
     const post = await prisma.post.findUnique({
-      where: { id: resolvedParams.id },
+      where: { id },
       select: { authorId: true },
     });
 
@@ -57,13 +66,13 @@ export async function PUT(
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: resolvedParams.id },
+      where: { id },
       data: { title, content },
     });
 
     return NextResponse.json(updatedPost);
   } catch (error) {
-    console.error(error);
+    console.error('Failed to update post:', error);
     return NextResponse.json(
       { error: 'Failed to update post' },
       { status: 500 }
